@@ -1,0 +1,43 @@
+<div class="mainContainer">
+    <!-- ! The heading container -->
+    <div class="headerContainer">
+        <div class="leftHeaderContainer">
+            <div class="headerImage">
+                <img src="/assets/img/logo.png" alt="optionImageLogo">
+            </div>
+        </div>
+        <div class="headerText">PEOPLE FOOTFALL COUNTER</div>
+        <div class="headerOptions">
+            <ul>
+                <li [routerLink]="['']" >Home</li>
+                <li [routerLink]="['/settings']" >ROI Setting</li>
+                <li [routerLink]="['/detailed']" >Detailed Page</li>
+            </ul>
+        </div>
+    </div>
+    <!--! The Video Stream Container  -->
+    <div class="leftContainer">
+        <div class="showVideo">
+            <div class="sectionPart" id="" style="height: 95%;">
+                <div id='chart1' style="height: 90%; position:relative; top: 5%"></div>
+            </div>
+            <div class="sectionPart" id="" style="height: 95%;">
+                <div id='chart2' style="height: 90%; position:relative; top: 5%"></div>
+            </div>
+        </div>
+    </div>
+    <!--! The Detected Face container  -->
+    <div class="rightContainer">
+        <div class="rightMainContainer">
+            <div class="bottomValuesContainer">
+                <button class="btn">SHIFT 1</button>
+            </div>
+            <div class="bottomValuesContainer">
+                <button class="btn">SHIFT 2</button>
+            </div>
+            <div class="bottomValuesContainer">
+                <button class="btn">SHIFT 3</button>
+            </div>
+        </div>
+    </div>
+</div>
