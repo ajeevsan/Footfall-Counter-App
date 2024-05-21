@@ -50,9 +50,10 @@ export class RoiSettingsComponent implements OnInit  {
     this.canvas.viewportTransform = [0.7, 0, 0, 0.7, -50, 50];
     this.canvas.add(polygon);
   }
+  
 
-  toogleClock(){
-    
+  toggleClock(){
+    this.timeContainer = !this.timeContainer
   }
 
   polygonPositionHandler(dim:any, finalMatrix:any, fabricObject:any) {

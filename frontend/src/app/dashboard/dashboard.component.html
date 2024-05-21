@@ -17,14 +17,16 @@
     </div>
     <!--! The Video Stream Container  -->
     <div class="leftContainer">
-        <div class="showVideo"></div>
+        <div class="showVideo">
+            <img *ngIf="imageUrl" [src]="imageUrl" alt="Live Feed">
+        </div>
         <div class="bottomValuesContainer">
             <div class="card work">
                 <div class="card-desc">
                     <div class="card-header">
                         <div class="card-title">Visible Inside</div>
                     </div>
-                    <div class="card-time">1</div>
+                    <div class="card-time"> {{visibleInside}} </div>
                 </div>
             </div>
 
@@ -33,7 +35,7 @@
                     <div class="card-header">
                         <div class="card-title">Visible Outside</div>
                     </div>
-                    <div class="card-time">4</div>
+                    <div class="card-time">{{visibleOutside}}</div>
                 </div>
             </div>
 
@@ -42,7 +44,7 @@
                     <div class="specialCard-header">
                         <div class="card-title">Total Inside</div>
                     </div>
-                    <div class="card-time">5</div>
+                    <div class="card-time"> {{totalEntries}} </div>
                 </div>
             </div>
         </div>
