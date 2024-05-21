@@ -1,0 +1,49 @@
+<div class="mainContainer">
+    <!-- ! The heading container -->
+    <div class="headerContainer">
+        <div class="leftHeaderContainer">
+            <div class="headerImage">
+                <img src="/assets/img/logo.png" alt="optionImageLogo">
+            </div>
+        </div>
+        <div class="headerText">PEOPLE FOOTFALL COUNTER</div>
+        <div class="headerOptions">
+            <ul>
+                <li [routerLink]="['']" >Home</li>
+                <li [routerLink]="['/settings']" >ROI Setting</li>
+                <li [routerLink]="['/detailed']" >Detailed Page</li>
+            </ul>
+        </div>
+    </div>
+    <!--! The Video Stream Container  -->
+    <div class="leftContainer">
+        <div class="showVideo">
+            <div id ="canvas-wrapper-roi" style="height: 100%; width: 100%;">
+                <canvas id="canvas-roi" style="width: 100%; height: 100%; pointer-events: auto; background-color: transparent; z-index: 2;"></canvas>
+            </div>
+        </div>
+    </div>
+    <!--! The Detected Face container  -->
+    <div class="rightContainer">
+        <div class="rightMainContainer">
+            <img class="sideBarImage" src="/assets/img/pencil.png" style alt="" (click)="edit()">
+            <img class="sideBarImage" src="/assets/img/clock.png" alt="" (click)="toggleClock()">
+        </div>
+    </div>
+
+    <div class="theTimeContainer" *ngIf="timeContainer">
+        <div class="popUpContainer">
+            <div class="inputContainer">
+                <div class="inputText"></div>
+                <div class="inputArea">
+                    
+                </div>
+            </div>
+            <div class="inputContainer">
+                <div class="inputText"></div>
+                <div class="inputArea"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
