@@ -102,18 +102,23 @@
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
-.showVideo{
+.showVideo {
     height: 75%;
     width: 98%;
     margin: 1%;
     border-radius: 20px;
     background-color: #e7e4e1;
-    /* overflow: hidden; */
+    overflow: hidden;  /* Ensure content does not overflow the container */
+    display: flex;  /* Flexbox to center the image */
+    justify-content: center;  /* Horizontally center the image */
+    align-items: center;  /* Vertically center the image */
 }
 
 .showVideo img {
     width: 100%;  /* Make the image take the full width of the container */
-    height: auto;  /* Adjust the height to maintain aspect ratio */
+    height: 100%;  /* Make the image take the full height of the container */
+    object-fit: contain;  /* Ensure the image covers the container while maintaining aspect ratio */
+    border-radius: 20px;  /* Match the border-radius of the parent container */
 }
 
 .bottomValuesContainer{

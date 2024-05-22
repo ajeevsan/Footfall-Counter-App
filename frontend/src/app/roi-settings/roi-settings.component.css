@@ -94,6 +94,25 @@
     box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 }
 
+.showVideoROI {
+    height: 75%;
+    width: 98%;
+    margin: 1%;
+    border-radius: 20px;
+    background-color: #e7e4e1;
+    overflow: hidden;  /* Ensure content does not overflow the container */
+    display: flex;  /* Flexbox to center the image */
+    justify-content: center;  /* Horizontally center the image */
+    align-items: center;  /* Vertically center the image */
+}
+
+.showVideoROI img {
+    width: 100%;  /* Make the image take the full width of the container */
+    height: 100%;  /* Make the image take the full height of the container */
+    object-fit: cover;  /* Ensure the image covers the container while maintaining aspect ratio */
+    border-radius: 20px;  /* Match the border-radius of the parent container */
+}
+
 .bottomValuesContainer{
     display: flex;
     justify-content: space-evenly;

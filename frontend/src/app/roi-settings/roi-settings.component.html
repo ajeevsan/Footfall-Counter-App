@@ -18,8 +18,9 @@
     <!--! The Video Stream Container  -->
     <div class="leftContainer">
         <div class="showVideo">
-            <div id ="canvas-wrapper-roi" style="height: 100%; width: 100%;">
-                <canvas id="canvas-roi" style="width: 100%; height: 100%; pointer-events: auto; background-color: transparent; z-index: 2;"></canvas>
+            <div id="canvas-wrapper-roi" class="showVideoROI" style="height: 100%; width: 100%;">
+                <img #imageElement *ngIf="imageUrl" [src]="imageUrl" alt="Live Feed" (load)="onImageLoad()">
+                <canvas #canvasElement id="canvas-roi" style="width: 100%; height: 100%; pointer-events: auto; background-color: transparent; z-index: 2;"></canvas>
             </div>
         </div>
     </div>
@@ -27,7 +28,7 @@
     <div class="rightContainer">
         <div class="rightMainContainer">
             <img class="sideBarImage" src="/assets/img/pencil.png" style alt="" (click)="edit()">
-            <img class="sideBarImage" src="/assets/img/clock.png" alt="" (click)="toggleClock()">
+            <img class="sideBarImage" src="/assets/img/clock.png" alt="" (click)="saveRoi()">
         </div>
     </div>
 

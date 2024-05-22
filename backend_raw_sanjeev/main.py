@@ -149,7 +149,7 @@ class PeopleCounter():
 
 
 class CounterThread(threading.Thread):
-    def __init__(self, counter_obj, interval=0.03):
+    def __init__(self, counter_obj, interval=0.1):
         threading.Thread.__init__(self)
         self.counter_obj = counter_obj
         self.interval = interval
@@ -175,35 +175,25 @@ def scale_coordinates(coordinates, scale_x, scale_y):
     return [(int(x * scale_x), int(y * scale_y)) for x, y in coordinates]
 
 def generate_frames(ws, counter_obj):
-    target_width = 640  # Replace with the target width
-    target_height = 360  # Replace with the target height
-
     while not ws.closed:
-        print('Sending the frames')
         try:
-            # counter_obj.run() is now called in a separate thread
+            # Access the latest frame from the counter_obj
             latest_frame = counter_obj.latest_frame
 
-            # Calculate scaling factors
-            original_height, original_width = latest_frame.shape[:2]
-            scale_x = target_width / original_width
-            scale_y = target_height / original_height
-
-            # Resize the frame
-            resized_frame = cv2.resize(latest_frame, (target_width, target_height))
-
             # Scale ROI coordinates
-            scaled_polygon = scale_coordinates(counter_obj.polygon, scale_x, scale_y)
-            scaled_linepoints = scale_coordinates(counter_obj.linepoints, scale_x, scale_y)
+            original_height, original_width = latest_frame.shape[:2]
+            scaled_polygon = scale_coordinates(counter_obj.polygon, 1, 1)
+            scaled_linepoints = scale_coordinates(counter_obj.linepoints, 1, 1)
 
-            # Draw the scaled ROI on the resized frame
-            plot_roi(resized_frame, scaled_polygon, scaled_linepoints)
+            # Draw the ROI on the original frame
+            plot_roi(latest_frame, scaled_polygon, scaled_linepoints)
 
             vis_in = counter_obj.visible_inside
             vis_out = counter_obj.visible_outside
             entry_count = counter_obj.entry_count
 
-            _, buffer = cv2.imencode('.jpg', resized_frame)
+            # Encode the original frame
+            _, buffer = cv2.imencode('.jpg', latest_frame)
             frame_data = {
                 'data': base64.b64encode(buffer).decode('utf-8'),
                 'vis_in': vis_in,
@@ -212,11 +202,12 @@ def generate_frames(ws, counter_obj):
             }
 
             ws.send(json.dumps(frame_data))
-            gevent.sleep(0.03)
+            gevent.sleep(0.1)
         except Exception as e:
             print(f"Error in generate_frames: {e}")
             break
-
+        
+        
 @sockets.route('/video_stream')
 def video_stream(ws):
     print('WebSocket connection established')

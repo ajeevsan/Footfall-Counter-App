@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, OnInit  } from '@angular/core';
 import { fabric } from 'fabric';
 import { Control } from 'fabric/fabric-impl';
+import { DataTransferService } from '../service/data-transfer.service';
 
 
 @Component({
@@ -16,39 +17,130 @@ export class RoiSettingsComponent implements OnInit  {
   canvasWrapperROI: any;
 
   timeContainer: boolean = false
-
+  arr_spot_roi: any = [];
+  arr_rect_roi: any = [];
 
   time? = new Date();
 
+  imageUrl: any;
+  visibleInside: number = 0;
+  visibleOutside: number = 0;
+  totalEntries: number = 0;
+  private dataSubscription: any;
+
+  canvasScalingWidthROI = 0;
+  canvasScalingHeightROI = 0;
+
+  constructor(private dataTransferService: DataTransferService) { }
+
   ngOnInit() {
 
+    this.dataSubscription = this.dataTransferService.data$.subscribe(data => {
+      this.imageUrl = `data:image/jpeg;base64,${data.data}`;
+      this.visibleInside = data.vis_in;
+      this.visibleOutside = data.vis_out;
+      this.totalEntries = data.tot_in;
+    });
+
+    // var points = [{
+    //   x: 100, y: 100
+    // }, {
+    //   x: 200, y: 100
+    // }, {
+    //   x: 200, y: 300
+    // }, {
+    //   x: 100, y: 300
+    // },]
+
+    // var polygon = new fabric.Polygon(points, {
+    //   left: 1000,
+    //   top: 100,
+    //   fill: '#98d5453b',
+    //   strokeWidth: 1,
+    //   stroke: 'red',
+    //   scaleX: 4,
+    //   scaleY: 4,
+    //   objectCaching: false,
+    //   transparentCorners: false,
+    //   cornerColor: 'blue',
+    // });
+    // // const group = new fabric.Group([polygon]) as any;
+    // // group.id = 'polygon'
+    // this.canvas.viewportTransform = [0.7, 0, 0, 0.7, -50, 50];
+    // this.canvas.add(polygon);
+
+    this.drawROI();
+  }
+
+  ngOnDestroy(): void {
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
+    this.dataTransferService.closeConnection();
+  }
+
+  drawROI() {
+    this.canvasROIWindowScaling()
     this.canvasWrapperROI = document.getElementById('canvas-wrapper-roi')
     this.canvas = new fabric.Canvas('canvas-roi',{ selection: false, width: this.canvasWrapperROI.clientWidth, height: this.canvasWrapperROI.clientHeight });
 
-    var points = [{
-      x: 1, y: 55
-    }, {
-      x: 6, y: 70
-    }, {
-      x: 2, y: 100
-    }, {
-      x: -12, y: 20
-    },]
+    const originalWidth = 1280;
+    const originalHeight = 720;
+    const currentWidth = this.canvasWrapperROI.clientWidth;
+    const currentHeight = this.canvasWrapperROI.clientHeight;
 
-    var polygon = new fabric.Polygon(points, {
+    const scaleX = currentWidth / originalWidth;
+    const scaleY = currentHeight / originalHeight;
+
+    let points = [
+      { x: 100 * scaleX, y: 100 * scaleY },
+      { x: 200 * scaleX, y: 100 * scaleY },
+      { x: 200 * scaleX, y: 300 * scaleY },
+      { x: 100 * scaleX, y: 300 * scaleY },
+    ];
+
+    let polygon = new fabric.Polygon(points, {
       left: 1000,
       top: 100,
-      fill: '#D81B60',
-      strokeWidth: 4,
-      stroke: 'green',
+      fill: '#98d5453b',
+      strokeWidth: 1,
+      stroke: 'red',
       scaleX: 4,
       scaleY: 4,
       objectCaching: false,
       transparentCorners: false,
       cornerColor: 'blue',
     });
-    this.canvas.viewportTransform = [0.7, 0, 0, 0.7, -50, 50];
+
+    this.canvas.clear();
     this.canvas.add(polygon);
+    this.canvas.requestRenderAll();
+  }
+
+  canvasROIWindowScaling() {
+    const canvasROI: HTMLElement = document.getElementById('canvas-roi')!;
+
+    
+    let canvasWidth = canvasROI.offsetWidth;
+    let canvasHeight = canvasROI.offsetHeight;
+    console.log('canvasWidth and canvasHeight', canvasWidth, canvasHeight);
+
+    this.canvasScalingWidthROI = 1280 / canvasWidth;
+    this.canvasScalingHeightROI = 720 / canvasHeight;
+
+    console.log('canvasWidth and canvasHeight', this.canvasScalingWidthROI, this.canvasScalingHeightROI);
+  }
+
+
+
+  onImageLoad(){
+    console.log('on image load clicked');
+  }
+
+  saveRoi(){
+    let roi = this.canvas.getObjects();
+    console.log(roi);
+    
   }
   
 
@@ -280,6 +372,29 @@ export class RoiSettingsComponent implements OnInit  {
       fabricObject.setPositionByOrigin(absolutePoint, newX + 0.5, newY + 0.5);
       return actionPerformed;
     })
+}
+
+movingRotatingWithinBounds(e: any) {
+  const obj = e.target;
+  var json
+  // if object is too big ignore
+  if(obj.height > obj.canvas.height || obj.width > obj.canvas.width){
+    return;
+  }
+  obj.setCoords();
+  // top-left  corner
+  if(obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0){
+    obj.top = Math.max(obj.top, obj.top-obj.getBoundingRect().top);
+    obj.left = Math.max(obj.left, obj.left-obj.getBoundingRect().left);
+  }
+  // bot-right corner
+  if(obj.getBoundingRect().top+obj.getBoundingRect().height  > obj.canvas.height || obj.getBoundingRect().left+obj.getBoundingRect().width  > obj.canvas.width){
+    obj.top = Math.min(obj.top, obj.canvas.height-obj.getBoundingRect().height+obj.top-obj.getBoundingRect().top);
+    obj.left = Math.min(obj.left, obj.canvas.width-obj.getBoundingRect().width+obj.left-obj.getBoundingRect().left);
+  }
+  json = this.canvas.toJSON();
+  // console.log('rect json',json);
+  this.arr_rect_roi[parseInt(this.canvas.getActiveObject().id.substring(4))-1] = [Math.round(this.canvas.getActiveObject().left * this.canvasScalingWidthROI), Math.round(this.canvas.getActiveObject().top * this.canvasScalingHeightROI) ,Math.round(this.canvas.getActiveObject().width * this.canvas.getActiveObject().scaleX * this.canvasScalingWidthROI),Math.round(this.canvas.getActiveObject().height * this.canvas.getActiveObject().scaleY * this.canvasScalingHeightROI)]
 }
 
 
